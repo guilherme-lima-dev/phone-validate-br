@@ -1,0 +1,23 @@
+{
+    "name": "glima/phone-validate-br",
+    "description": "Pacote destinado para validação e formatação de telefones brasileiros, cobrindo 99% dos casos.",
+    "type": "library",
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Glima\\PhoneValidateBr\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Guilherme Lima"
+        }
+    ],
+    "minimum-stability": "dev"
+}
