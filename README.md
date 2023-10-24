@@ -2,7 +2,7 @@
 
 Essa lib é um projeto que cobre 99% dos casos formatando e validando telefones brasileiros. Minha motivação para criar esse pacote veio de um projeto em que recebemos vários telefones de varias bases diferentes e cada um com um padrão diferente, esse projeto faz envio de mensagens via Whatsapp e SMS. Os telefones inválidos geravam muitos erros, então na tentativa de minimizar esses erros ao máximo criei essa lib que a principio só tem um métoco que realiza toda essa validação.
 
-## Intalação
+## Instalação
 
 Use o composer para instalar
 
