@@ -19,8 +19,10 @@ class PhoneValidatorBRTest extends TestCase
     public function phoneValidationProvider(): array
     {
         return [
-            ["55 055 9 88888888", true],
-            ["55 55 9 88888888", true],
+            ["55 055 9 88888888", false],
+            ["55 55 9 88888888", false],
+            ["55 055 9 84665732", true],
+            ["55 55 9 98776432", true],
             ["+55(011) 91234-5678", true],
             [" +55(11) 91234-5678 ", true],
             ["+55(11) 1234-5678", true],
