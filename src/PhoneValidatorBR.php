@@ -107,32 +107,32 @@ class PhoneValidatorBR
         return preg_match('/(\d)\1{6,}/', $phone) == 1;
     }
 
-    public static function hasValidNinthDigit(array|string|null $phone): bool
+    private static function hasValidNinthDigit(array|string|null $phone): bool
     {
         return strlen($phone) == 11 && substr($phone, 2, 1) != "9";
     }
 
-    public static function cleanPhoneSizeIsNotValid(array|string|null $phone): bool
+    private static function cleanPhoneSizeIsNotValid(array|string|null $phone): bool
     {
         return strlen($phone) < 10;
     }
 
-    public static function hasValidDDD(string $ddd): bool
+    private static function hasValidDDD(string $ddd): bool
     {
         return in_array($ddd, self::DDDS_BR);
     }
 
-    public static function lengthGreaterThan(string $phone, int $number): bool
+    private static function lengthGreaterThan(string $phone, int $number): bool
     {
         return strlen($phone) > $number;
     }
 
-    public static function lengthGreaterThanFourteenOrLessThanTen(array|string|null $phone): bool
+    private static function lengthGreaterThanFourteenOrLessThanTen(array|string|null $phone): bool
     {
         return strlen($phone) < 10 || strlen($phone) > 14;
     }
 
-    public static function validationInitialDigits(array|string|null $phone): bool
+    private static function validationInitialDigits(array|string|null $phone): bool
     {
         return !self::hasValidDDD(substr($phone, 0, 2)) &&
             !in_array(substr($phone, 0, 3), self::DDDS_BR_WITH_ZERO) &&
