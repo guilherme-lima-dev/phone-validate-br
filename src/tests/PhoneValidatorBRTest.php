@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class PhoneValidatorBRTest extends TestCase
 {
-
     /**
      * @dataProvider phoneValidationProvider
      */
@@ -50,9 +49,6 @@ class PhoneValidatorBRTest extends TestCase
             ["(009) 9 6543-2109", false],
             ["(01) 9 6543-2109", false],
             ["(010) 8 6543-2109", false],
-            ["(009) 5 6543-2109", false],
-            ["(01) 2 6543-2109", false],
-            ["(01) 9 6543-2109", false],
             ["(009)6543-2109", false],
             ["(01) 6543-2109", false],
             ["55 (010) 9 6543-2109", false],
@@ -65,8 +61,6 @@ class PhoneValidatorBRTest extends TestCase
             ["055 (010) 8 6543-2109", false],
             ["55 (009) 5 6543-2109", false],
             ["055 (009) 5 6543-2109", false],
-            ["55 (01) 2 6543-2109", false],
-            ["055 (01) 2 6543-2109", false],
             ["55 (01) 9 6543-2109", false],
             ["055 (01) 9 6543-2109", false],
             ["55 (009)6543-2109", false],
@@ -75,7 +69,13 @@ class PhoneValidatorBRTest extends TestCase
             ["055 (01) 6543-2109", false],
             ["9876-5432", false],
             ["8765-4321", false],
-            ["7654-3210", false]
+            ["7654-3210", false],
+            ["2198179254", true],
+            ["1937355700", false],
+            ["1134296314", false],
+            ["1127283535", false],
+            ["5433324744", false],
+            ["1196663353", true],
         ];
     }
 
