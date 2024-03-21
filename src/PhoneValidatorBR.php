@@ -6,8 +6,7 @@ use Glima\PhoneValidateBr\Responses\PhoneValidatorResponse;
 
 class PhoneValidatorBR
 {
-
-    const DDDS_BR = [
+    public const DDD_BR_LIST = [
         "11", "12", "13", "14", "15", "16", "17",
         "18", "19", "21", "22", "24", "27", "28",
         "31", "32", "33", "34", "35", "37", "38",
@@ -20,29 +19,15 @@ class PhoneValidatorBR
         "96", "97", "98", "99"
     ];
 
-    const DDDS_BR_WITH_ZERO = [
-        "011", "012", "013", "014", "015", "016", "017",
-        "018", "019", "021", "022", "024", "027", "028",
-        "031", "032", "033", "034", "035", "037", "038",
-        "041", "042", "043", "044", "045", "046", "047",
-        "048", "049", "051", "053", "054", "055", "061",
-        "062", "063", "064", "065", "066", "067", "068",
-        "069", "071", "073", "074", "075", "077", "079",
-        "081", "082", "083", "084", "085", "086", "087",
-        "088", "089", "091", "092", "093", "094", "095",
-        "096", "097", "098", "099"
-    ];
-
     public static function validate(string $phone): PhoneValidatorResponse
     {
 
         $message = "O telefone é válido!";
         $phone = preg_replace("/\D/", "", $phone);
 
-        if (self::validationInitialDigits($phone)) {
-            $phone = null;
+        if (!self::haveValidInitialDigits($phone)) {
             $message = "Os digitos iniciais não são válidos!";
-            return self::handleReturn($phone, false, $message);
+            return self::handleReturn(null, false, $message);
         }
 
         if (self::lengthGreaterThan($phone, 11)) {
@@ -50,9 +35,8 @@ class PhoneValidatorBR
         }
 
         if (self::lengthGreaterThanFourteenOrLessThanTen($phone)) {
-            $phone = null;
             $message = "A quantidade de digitos desse telefone é inválida!";
-            return self::handleReturn($phone, false, $message);
+            return self::handleReturn(null, false, $message);
         }
 
         if (self::lengthGreaterThan($phone, 11)) {
@@ -61,42 +45,42 @@ class PhoneValidatorBR
 
         if (
             self::lengthGreaterThan($phone, 10) &&
-            substr($phone, 2, 1) != "9" &&
-            in_array(substr($phone, 0, 3), self::DDDS_BR_WITH_ZERO)
+            $phone[2] !== "9" &&
+            in_array(substr($phone, 0, 3), self::getDDDWithZeroList(), true)
         ) {
             $phone = preg_replace('/^0/', '', $phone, 1);
         }
 
         if (self::lengthGreaterThan($phone, 11)) {
-            $phone = null;
             $message = "O código de área é invalido, no Brasil o código é 55!";
-            return self::handleReturn($phone, false, $message);
+            return self::handleReturn(null, false, $message);
         }
 
         $ddd = substr($phone, 0, 2);
 
         if (!self::hasValidDDD($ddd)) {
-            $phone = null;
             $message = "O DDD é invalido!";
-            return self::handleReturn($phone, false, $message);
+            return self::handleReturn(null, false, $message);
         }
 
         if (self::cleanPhoneSizeIsNotValid($phone)) {
-            $phone = null;
             $message = "O telefone possui um formato desconhecido!";
-            return self::handleReturn($phone, false, $message);
+            return self::handleReturn(null, false, $message);
         }
 
         if (self::hasValidNinthDigit($phone)) {
-            $phone = null;
             $message = "O nono digito está incorreto, deve ter o valor 9!";
-            return self::handleReturn($phone, false, $message);
+            return self::handleReturn(null, false, $message);
+        }
+
+        if (self::isHomeNumber($phone)) {
+            $message = "Só é aceito numeros de celular!";
+            return self::handleReturn(null, false, $message);
         }
 
         if (self::hasRepeatedNumbers($phone)) {
-            $phone = null;
             $message = "O numero possui muitos digitos repetidos!";
-            return self::handleReturn($phone, false, $message);
+            return self::handleReturn(null, false, $message);
         }
 
         return self::handleReturn($phone, true, $message);
@@ -107,9 +91,14 @@ class PhoneValidatorBR
         return preg_match('/(\d)\1{6,}/', $phone) == 1;
     }
 
+    private static function isHomeNumber(string $phone): bool
+    {
+        return strlen($phone) === 10 && ($phone[2] === "3" || $phone[2] === "2");
+    }
+
     private static function hasValidNinthDigit(array|string|null $phone): bool
     {
-        return strlen($phone) == 11 && substr($phone, 2, 1) != "9";
+        return strlen($phone) === 11 && $phone[2] !== "9";
     }
 
     private static function cleanPhoneSizeIsNotValid(array|string|null $phone): bool
@@ -119,7 +108,7 @@ class PhoneValidatorBR
 
     private static function hasValidDDD(string $ddd): bool
     {
-        return in_array($ddd, self::DDDS_BR);
+        return in_array($ddd, self::DDD_BR_LIST);
     }
 
     private static function lengthGreaterThan(string $phone, int $number): bool
@@ -132,12 +121,22 @@ class PhoneValidatorBR
         return strlen($phone) < 10 || strlen($phone) > 14;
     }
 
-    private static function validationInitialDigits(array|string|null $phone): bool
+    private static function haveValidInitialDigits(array|string|null $phone): bool
     {
-        return !self::hasValidDDD(substr($phone, 0, 2)) &&
-            !in_array(substr($phone, 0, 3), self::DDDS_BR_WITH_ZERO) &&
-            !str_starts_with($phone, "055") &&
+        return !self::hasValidDDD(substr($phone, 0, 2)) ||
+            !in_array(substr($phone, 0, 3), self::getDDDWithZeroList(), true) ||
+            !str_starts_with($phone, "055") ||
             !str_starts_with($phone, "55");
+    }
+
+    private static function getDDDWithZeroList(): array
+    {
+        $DDDWithZeroList = [];
+        foreach (self::DDD_BR_LIST as $value) {
+            $DDDWithZeroList[] = '0'.$value;
+        }
+
+        return $DDDWithZeroList;
     }
 
     private static function handleReturn($phone, bool $isValid, string $message): PhoneValidatorResponse
